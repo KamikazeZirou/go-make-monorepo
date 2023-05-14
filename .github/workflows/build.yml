@@ -38,3 +38,10 @@ jobs:
 
       - name: Build
         run: make all.build
+
+      - name: Display
+        run: |
+          ls -al
+          ls -al apps/app1
+          ls -al apps/app1/dist
+          ls -al libs/lib1
