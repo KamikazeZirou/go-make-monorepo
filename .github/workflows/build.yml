@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.20'
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Test
+        run: make all.test
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            apps/app1/dist/main
+          key: ${{ runner.os }}-app1-${{ hashFiles('**/go.sum', 'libs/lib1/*.go', 'apps/app1/*.go') }}
+          restore-keys: |
+            ${{ runner.os }}-app1-
+
+      - name: Build
+        run: make all.build
